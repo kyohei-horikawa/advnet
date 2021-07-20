@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <!-- Add some CSS to change client UI -->
+    <style>
+      body {
+        background-color: #232f3e;
+      }
+      label,
+      button {
+        color: #ff9900;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 40px;
+      }
+      input {
+        color: #232f3e;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 20px;
+        width: 500px;
+      }
+      #answer_box {
+        padding: 30px;
+        color: #ff9900;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+      }
+      h1 {
+        color: #ff9900;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+    <script>
+      // define the callAPI function that takes a first name and last name as parameters
+      var callAPI = (subject) => {
+        // instantiate a headers object
+        var myHeaders = new Headers();
+        // add content type header to object
+        myHeaders.append("Content-Type", "application/json");
+        // using built in JSON utility package turn object to string and store in a variable
+        var raw = JSON.stringify({ subject: subject });
+        // create a JSON object with parameters for API call and store in a variable
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+        // make API call with parameters and use promises to get response
+        fetch(
+          "https://dzi5gz06de.execute-api.us-east-1.amazonaws.com/dev",
+          requestOptions
+        )
+          .then((response) => response.text())
+          .then((result) => {
+            // alert(JSON.parse(result).body);
+            const box = document.getElementById("answer_box");
+            let sub = document.createElement("p");
+            let ans = document.createElement("p");
+            sub.textContent = "お題: " + subject;
+            ans.textContent = "回答: " + JSON.parse(result).body;
+            box.appendChild(sub);
+            box.appendChild(ans);
+          })
+          .catch((error) => console.log("error", error));
+      };
+    </script>
+  </head>
+  <body>
+    <h1>大喜利BOT(仮)</h1>
+    <form>
+      <label>お題 :</label>
+      <input type="text" id="subject" />
+      <!-- set button onClick method to call function we defined passing input values as parameters -->
+      <button
+        type="button"
+        onclick="callAPI(document.getElementById('subject').value)"
+      >
+        回答する!
+      </button>
+    </form>
+    <div id="answer_box"></div>
+  </body>
+</html>
